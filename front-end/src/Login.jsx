@@ -8,7 +8,8 @@ import Signup from './Signup'
 function Login() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4 py-10"
+      className="min-h-screen flex items-center justify-center 
+      bg-white dark:bg-gray-900 px-4 py-10 transition-colors duration-500"
     >
       <Theme />
       <div className="w-full max-w-6xl rounded-3xl overflow-hidden shadow-2xl border-1 border-gray-300 dark:border-gray-800 flex flex-col md:flex-row">
@@ -30,7 +31,7 @@ function Login() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-bold text-black mt-6">
-            Save your growth
+            Préservez votre croissance
           </h2>
         </div>
 
@@ -38,12 +39,12 @@ function Login() {
         {/* LOGIN SECTION */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
 
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-500 mb-2">
+          <h2 className="text-2xl md:text-4xl font-bold dark:text-white text-gray-500 mb-2">
             Welcome Back
           </h2>
 
           <p className="dark:text-gray-500 text-black mb-8 font-bold text-sm md:text-base">
-            Sign in to continue to your dashboard
+            Connectez-vous pour accéder à votre dashboard
           </p>
 
           <form className="space-y-5">
@@ -101,8 +102,8 @@ function Login() {
           </form>
 
           <div className="mt-8 border-t border-[#1e293b] pt-6 text-[#475569] text-sm flex align- text-center md:text-left">
-            Pas encore souscrit?{" "}
-            <span className="dark:text-[#a78bfa] text-[#a90bfa] cursor-pointer hover:underline">
+            Pas encore souscrit?
+            <span className="dark:text-[#a78bfa] text-[#a90bfa] cursor-pointer hover:underline hover:scale-110">
               <Link to='/signup'>S'inscrire</Link>
             </span>
           </div>

@@ -14,7 +14,7 @@ function Theme() {
   const toggleTheme = () => {
     if(dark){
       document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'dark')
+      localStorage.setItem('theme', 'light')
     } else {
       document.documentElement.classList.add('dark')
       localStorage.setItem('theme', 'dark')
@@ -25,7 +25,7 @@ function Theme() {
   
   return (
     <>
-      <div className='bg-gray-800 px-1 dark:bg-gray-600 absolute -mt-140 ml-260 rounded-full z-2'>
+      <div className='bg-gray-900 px-1 dark:bg-gray-600 fixed top-4 right-4 rounded-full z-2'>
         <button onClick={toggleTheme} className='dark:text-white text-red-500 p-2 '>
           { dark ? "☀️" : "🌙" }
         </button>
