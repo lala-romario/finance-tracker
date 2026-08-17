@@ -1,6 +1,6 @@
-import './App.css';
-import Theme from './dark.mode';
-import FTlogo from './assets/FT-logo.jpg';
+import '../App.css';
+import Theme from '../components/dark.mode';
+import FTlogo from "../assets/FT-logo.jpg";
 import { Link } from 'react-router';
 import Signup from './Signup'
 

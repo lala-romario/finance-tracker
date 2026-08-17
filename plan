@@ -1,0 +1,104 @@
+Plan:
+
+Créer le projet Symfony
+Configurer MySQL
+Créer les entités Doctrine
+Créer les migrations et la base
+Créer l'authentification
+Créer l'API des transactions
+Créer les catégories et comptes
+Créer le dashboard/statistiques
+Connecter React ↔ Symfony
+Tester l'API avec Postman/Insomnia
+Sécuriser et préparer le déploiement
+
+
+Les 5 tables de Finance Tracker V1
+1. users:
+users
+├── id
+├── email
+├── password
+├── first_name
+├── last_name
+├── created_at
+└── updated_at
+2. categories:
+categories
+├── id
+├── user_id
+├── name
+├── type          → income / expense
+├── icon
+├── created_at
+└── updated_at
+3. transactions:
+transactions
+├── id
+├── user_id
+├── category_id
+├── type
+├── amount
+├── description
+├── transaction_date
+├── created_at
+└── updated_at
+4. budgets:
+budgets
+├── id
+├── user_id
+├── category_id
+├── amount
+├── month
+├── year
+├── created_at
+└── updated_at
+5. refresh_tokens:
+refresh_tokens
+├── id
+├── user_id
+├── token
+├── expires_at
+└── created_at
+
+
+                 ┌──────────┐
+                 │  USERS   │
+                 └────┬─────┘
+                      │
+          ┌───────────┼────────────┐
+          │           │            │
+          ▼           ▼            ▼
+    categories   transactions   budgets
+          │           ▲            │
+          └───────────┴────────────┘
+
+                 refresh_tokens
+                       ▲
+                       │
+                      users
+
+User
+ ├── 1:N Categories
+ ├── 1:N Transactions
+ ├── 1:N Budgets
+ └── 1:N RefreshTokens
+
+Category
+ ├── 1:N Transactions
+ └── 1:N Budgets
+
+
+
+On va procéder dans cet ordre:
+ PostgreSQL
+   ↓
+BDD finance_tracker
+   ↓
+Symfony + Doctrine
+   ↓
+Entities
+   ↓
+Migrations
+   ↓
+Tables PostgreSQL

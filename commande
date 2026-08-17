@@ -1,0 +1,10 @@
+Entre dans postgresql: sudo -u postgres psql
+
+CREATE USER finance_tracker WITH PASSWORD 'financetracker2026';
+
+CREATE DATABASE finance_tracker OWNER finance_tracker;
+
+Passe en mode query: \q
+
+Lance et utilise m base de donnee host localhost: psql -h 127.0.0.1 -U finance_tracker -d finance_tracker
+

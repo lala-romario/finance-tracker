@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Button from '../components/AddIncomeButton';
 
 const PURPLE = '#7F77DD';
 const PURPLE_DARK = '#534AB7';
@@ -8,10 +9,24 @@ const RED = '#E24B4A';
 
 
 
+const handleIncome = () => {
+    console.log('napiditra vola zay')
+};
 
 function Dashboard() {
     const flowRef = useRef(null);
     const pieRef = useRef(null);
+
+    {/*code pour prendre le moi et faire majuscule le premier lettre*/}
+    const month = new Date().toLocaleString('fr-FR', { month: 'long' });
+    const Month = month.charAt(0).toUpperCase() + month.slice(1)
+    const day = new Date().getDate()
+
+    const balance = 0;
+    const income = 0;
+    const expense = 0;
+    const saving = 0;
+    
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -114,10 +129,10 @@ function Dashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                     <span
-                        className="text-[11px] px-3 py-1 rounded-full border"
+                        className="text-[11px] px-3 py-1 rounded-full border mr-2"
                         style={{ background: PURPLE_LIGHT, color: PURPLE_DARK, borderColor: '#AFA9EC' }}
                     >
-                        May 2025
+                        { day } { Month }
                     </span>
                     <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium border"
@@ -131,10 +146,10 @@ function Dashboard() {
             {/* Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
                 {[
-                    { label: 'Total balance', value: '$12,480', change: '+2.4% this month', up: true },
-                    { label: 'Income', value: '$4,200', change: '+$300 vs last', up: true },
-                    { label: 'Expenses', value: '$2,750', change: '+$180 vs last', up: false },
-                    { label: 'Savings', value: '$1,450', change: '34% rate', up: true },
+                    { label: 'Solde', value: balance, change: '+2.4% this month', up: true },
+                    { label: 'Revenus', value: income, change: '+$300 vs last', up: true },
+                    { label: 'Depenses', value: expense, change: '+$180 vs last', up: false },
+                    { label: 'Economies', value: saving, change: '34% rate', up: true },
                 ].map((m) => (
                     <div key={m.label} className="bg-white dark:bg-gray-800 rounded-lg p-3">
                         <div className="text-[11px] uppercase tracking-wide text-gray-400 mb-1">{m.label}</div>
@@ -146,46 +161,29 @@ function Dashboard() {
                 ))}
             </div>
 
-            {/* Quick actions */}
+            <div>
+                <Button onClick={handleIncome} />
+            </div>
+
+            
+            {/* actions button */}
             <div className="flex gap-2 mb-4">
                 {[
-                    { label: '', icon: '+' },
-                    { label: 'Add expense', icon: '-' },
-                    { label: 'Analysis', icon: '↗' },
-                    { label: 'Export', icon: '↓' },
+                    { label: 'Add income', icon: '+', action: () => setShowIncome(showIncome) },
+                    { label: 'Add expense', icon: '-', action: () => { } },
+                    { label: 'Analysis', icon: '↗', action: () => { } },
+                    { label: 'Export', icon: '↓', action: () => { } },
                 ].map((a) => (
                     <button
                         key={a.label}
+                        onClick={a.action}
                         className="flex-1 flex flex-col items-center gap-1 bg-white dark:bg-gray-800 rounded-lg py-2 px-1 text-[11px] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none"
                     >
                         <span className="text-lg font-medium" style={{ color: PURPLE }}>{a.icon}</span>
-                        {a.label}
+                        <span className="hidden sm:block">{a.label}</span>
                     </button>
                 ))}
             </div>
-
-            <div className="flex gap-2 mb-4">
-                <button className="flex-1 flex flex-col items-center gap-1 bg-white dark:bg-gray-800 rounded-lg py-2 px-1 text-[11px] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none">
-                    <span className="text-lg font-medium" style={{ color: PURPLE }}></span>
-                    Add income
-                </button>
-            </div>
-
-            <div className="flex gap-2 mb-4">
-                <button className="flex-1 flex flex-col items-center gap-1 bg-white dark:bg-gray-800 rounded-lg py-2 px-1 text-[11px] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none">
-                    <span className="text-lg font-medium" style={{ color: PURPLE }}></span>
-                    Add expense
-                </button>
-            </div>
-
-            {/*Champ add income*/}
-            <button
-                onClick={() => setShowIncome(!showIncome)}
-                className="flex-1 flex flex-col items-center gap-1 bg-white dark:bg-gray-800 rounded-lg py-2 px-1 text-[11px] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border-none"
-            >
-                <span className="text-lg font-medium" style={{ color: PURPLE }}>+</span>
-                Add income
-            </button>
 
             {/* Cash flow chart */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 mb-4">
@@ -226,7 +224,7 @@ function Dashboard() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="text-[13px] font-medium text-gray-900 dark:text-white truncate">{t.name}</div>
-                                <div className="text-[11px] text-gray-400">{t.date}</div>
+                                <div className="text-[11px] text-gray-400 mr-2">{t.date}</div>
                             </div>
                             <div className={`text-[13px] font-medium shrink-0 ${t.up ? 'text-emerald-600' : 'text-red-500'}`}>
                                 {t.amount}

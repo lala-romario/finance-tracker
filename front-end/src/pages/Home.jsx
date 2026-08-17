@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import FTlogo from "./assets/FT-logo.jpg";
+import FTlogo from "../assets/FT-logo.jpg";
 
 function Home() {
     return (

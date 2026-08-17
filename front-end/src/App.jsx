@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import { useEffect, useState } from 'react';
-import Home from './Home.jsx';
-import Login from './Login.jsx';
-import Signup from './Signup';
-import Dashboard from './dashboard.jsx';
-import Theme from './dark.mode.jsx';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
+import Dashboard from './pages/dashboard.jsx';
+import Theme from './components/dark.mode.jsx';
 
 
 function App() {
