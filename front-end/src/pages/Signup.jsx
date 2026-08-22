@@ -9,7 +9,8 @@ function Signup() {
         const formData = new FormData(e.target);
 
         const data = {
-            name: formData.get('name'),
+            firstname: formData.get('firstname'),
+            lastname: formData.get('lastname'),
             email: formData.get('email'),
             password: formData.get('password')
         }
@@ -33,14 +34,29 @@ function Signup() {
 
                     <form className="space-y-5" onSubmit={handleSubmit}>
 
-                        {/* NAME */}
+                        {/* FIRSTNAME */}
                         <div>
                             <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
-                                Name
+                                First name
                             </label>
                             <input
                                 type="text"
-                                name="name"
+                                name="firstname"
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+          bg-transparent text-gray-800 dark:text-white
+          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+          transition-all duration-300"
+                            />
+                        </div>
+
+                        {/* LASTNAME */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                                Last name
+                            </label>
+                            <input
+                                type="text"
+                                name="lastname"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
           bg-transparent text-gray-800 dark:text-white
           focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
