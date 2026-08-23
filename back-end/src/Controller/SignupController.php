@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +18,7 @@ final class SignupController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
+
         // Récupérer le JSON envoyé par le client
         $data = json_decode($request->getContent(), true);
 
@@ -34,7 +36,12 @@ final class SignupController
         $lastName = trim($data['lastName'] ?? '');
 
         // Vérifier les champs obligatoires
-        if ($email === '' || $password === '' || $firstName === '' || $lastName === '') {
+        if (
+            $email === '' ||
+            $password === '' ||
+            $firstName === '' ||
+            $lastName === ''
+        ) {
             return new JsonResponse([
                 'message' => 'All fields are required'
             ], JsonResponse::HTTP_BAD_REQUEST);
@@ -80,13 +87,105 @@ final class SignupController
 
         $user->setPassword($hashedPassword);
 
-        // Sauvegarder en base de données
+        // Sauvegarder le nouvel utilisateur
         $entityManager->persist($user);
+
+        /*
+         * ---------------------------------------------------------
+         * Créer les catégories par défaut de l'utilisateur
+         * ---------------------------------------------------------
+         */
+
+        $defaultCategories = [
+            // Revenus
+            [
+                'name' => 'Salaire',
+                'type' => 'income',
+                'icon' => '💼',
+            ],
+            [
+                'name' => 'Autres revenus',
+                'type' => 'income',
+                'icon' => '💰',
+            ],
+
+            // Dépenses
+            [
+                'name' => 'Alimentation',
+                'type' => 'expense',
+                'icon' => '🍔',
+            ],
+            [
+                'name' => 'Transport',
+                'type' => 'expense',
+                'icon' => '🚗',
+            ],
+            [
+                'name' => 'Logement',
+                'type' => 'expense',
+                'icon' => '🏠',
+            ],
+            [
+                'name' => 'Santé',
+                'type' => 'expense',
+                'icon' => '❤️',
+            ],
+            [
+                'name' => 'Loisirs',
+                'type' => 'expense',
+                'icon' => '🎮',
+            ],
+            [
+                'name' => 'Shopping',
+                'type' => 'expense',
+                'icon' => '🛍️',
+            ],
+            [
+                'name' => 'Bricolage',
+                'type' => 'expense',
+                'icon' => '🔨',
+            ],
+            [
+                'name' => 'Matériel maison',
+                'type' => 'expense',
+                'icon' => '🛠️',
+            ],
+            [
+                'name' => 'Vacances',
+                'type' => 'expense',
+                'icon' => '🏖️',
+            ],
+            [
+                'name' => 'Abonnements',
+                'type' => 'expense',
+                'icon' => '📱',
+            ],
+            [
+                'name' => 'Autres dépenses',
+                'type' => 'expense',
+                'icon' => '📦',
+            ],
+        ];
+
+        foreach ($defaultCategories as $categoryData) {
+
+            $category = new Category();
+
+            $category->setName($categoryData['name']);
+            $category->setType($categoryData['type']);
+            $category->setIcon($categoryData['icon']);
+            $category->setOwner($user);
+
+            $entityManager->persist($category);
+        }
+
+        // Sauvegarder User + Categories
         $entityManager->flush();
 
         // Réponse
         return new JsonResponse([
             'message' => 'User created successfully',
+
             'user' => [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
