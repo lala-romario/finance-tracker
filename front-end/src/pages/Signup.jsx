@@ -1,22 +1,57 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import api from '../api/axios';
 import '../App.css';
-
 
 function Signup() {
 
-    const handleSubmit = (e) => {
+    const navigate = useNavigate();
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        setError('');
+        setSuccess('');
+        setLoading(true);
+
         const formData = new FormData(e.target);
 
         const data = {
-            firstname: formData.get('firstname'),
-            lastname: formData.get('lastname'),
+            firstName: formData.get('firstname'),
+            lastName: formData.get('lastname'),
             email: formData.get('email'),
-            password: formData.get('password')
-        }
+            password: formData.get('password'),
+        };
 
-        console.log(data)
-    }
+        try {
+            const response = await api.post('/signup', data);
+
+            console.log(response.data);
+
+            navigate('/login', {
+                state: {
+                    message: 'Account created successfully. You can now sign in.'
+                }
+            });
+
+            setSuccess('Account created successfully!');
+            e.target.reset();
+
+        } catch (error) {
+            console.error(error);
+
+            if (error.response) {
+                setError(error.response.data.message || 'Registration failed.');
+            } else {
+                setError('Unable to connect to the server.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -32,6 +67,18 @@ function Signup() {
                         </p>
                     </div>
 
+                    {error && (
+                        <div className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm">
+                            {success}
+                        </div>
+                    )}
+
                     <form className="space-y-5" onSubmit={handleSubmit}>
 
                         {/* FIRSTNAME */}
@@ -43,9 +90,9 @@ function Signup() {
                                 type="text"
                                 name="firstname"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-          bg-transparent text-gray-800 dark:text-white
-          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-          transition-all duration-300"
+            bg-transparent text-gray-800 dark:text-white
+            focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+            transition-all duration-300"
                             />
                         </div>
 
@@ -58,9 +105,9 @@ function Signup() {
                                 type="text"
                                 name="lastname"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-          bg-transparent text-gray-800 dark:text-white
-          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-          transition-all duration-300"
+            bg-transparent text-gray-800 dark:text-white
+            focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+            transition-all duration-300"
                             />
                         </div>
 
@@ -73,9 +120,9 @@ function Signup() {
                                 type="email"
                                 name="email"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-          bg-transparent text-gray-800 dark:text-white
-          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-          transition-all duration-300"
+            bg-transparent text-gray-800 dark:text-white
+            focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+            transition-all duration-300"
                             />
                         </div>
 
@@ -88,19 +135,21 @@ function Signup() {
                                 type="password"
                                 name="password"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-          bg-transparent text-gray-800 dark:text-white
-          focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-          transition-all duration-300"
+            bg-transparent text-gray-800 dark:text-white
+            focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
+            transition-all duration-300"
                             />
                         </div>
 
                         {/* BUTTON */}
                         <button
                             type="submit"
+                            disabled={loading}
                             className="w-full bg-purple-700 text-white py-2.5 rounded-lg font-medium 
-        hover:bg-purple-800 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg"
+    hover:bg-purple-800 active:scale-95 transition-all duration-200 
+    shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Sign up
+                            {loading ? 'Creating account...' : 'Sign up'}
                         </button>
 
                     </form>
