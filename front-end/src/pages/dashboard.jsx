@@ -15,6 +15,7 @@ function Dashboard() {
      * Dashboard
      */
     const [dashboard, setDashboard] = useState(null);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -33,6 +34,7 @@ function Dashboard() {
 
     const [submitting, setSubmitting] = useState(false);
     const [transactionError, setTransactionError] = useState(null);
+    const [showUserMenu, setShowUserMenu] = useState(false);
 
     /*
  * Catégories par défaut
@@ -42,16 +44,6 @@ function Dashboard() {
             value: 'Salaire',
             label: 'Salaire',
             icon: '💼',
-        },
-        {
-            value: 'Freelance',
-            label: 'Freelance',
-            icon: '💻',
-        },
-        {
-            value: 'Prime',
-            label: 'Prime',
-            icon: '🎁',
         },
         {
             value: 'Autres revenus',
@@ -77,24 +69,29 @@ function Dashboard() {
             icon: '🏠',
         },
         {
-            value: 'Bricolage',
-            label: 'Bricolage',
-            icon: '🔨',
-        },
-        {
-            value: 'Maison',
-            label: 'Maison',
-            icon: '🏡',
-        },
-        {
             value: 'Santé',
             label: 'Santé',
             icon: '❤️',
         },
         {
-            value: 'Sorties',
-            label: 'Sorties',
-            icon: '🎉',
+            value: 'Loisirs',
+            label: 'Loisirs',
+            icon: '🎮',
+        },
+        {
+            value: 'Shopping',
+            label: 'Shopping',
+            icon: '🛍️',
+        },
+        {
+            value: 'Bricolage',
+            label: 'Bricolage',
+            icon: '🔨',
+        },
+        {
+            value: 'Matériel maison',
+            label: 'Matériel maison',
+            icon: '🛠️',
         },
         {
             value: 'Vacances',
@@ -107,19 +104,9 @@ function Dashboard() {
             icon: '📱',
         },
         {
-            value: 'Shopping',
-            label: 'Shopping',
-            icon: '🛍️',
-        },
-        {
-            value: 'Éducation',
-            label: 'Éducation',
-            icon: '📚',
-        },
-        {
             value: 'Autres dépenses',
             label: 'Autres dépenses',
-            icon: '💸',
+            icon: '📦',
         },
     ];
 
@@ -145,8 +132,42 @@ function Dashboard() {
         }
     };
 
+    /*
+     * Récupération de l'user
+     */
+    const fetchUser = async () => {
+        try {
+            const response = await api.get('/me');
+
+            console.log('USER RESPONSE:', response.data);
+
+            setUser(response.data.user);
+
+        } catch (error) {
+            console.error('ERREUR USER:', error);
+            console.error('STATUS:', error.response?.status);
+            console.error('DATA:', error.response?.data);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await api.post('/logout');
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion :', error);
+        } finally {
+            // À adapter selon l'endroit où tu stockes ton JWT
+            localStorage.removeItem('token');
+
+            setShowUserMenu(false);
+
+            window.location.href = '/login';
+        }
+    };
+
     useEffect(() => {
         fetchDashboard();
+        fetchUser();
     }, []);
 
     /*
@@ -300,6 +321,10 @@ function Dashboard() {
      * Economies
      */
     const saving = dashboard?.saving ?? (income - expense);
+
+    const userInitials = user
+        ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`.toUpperCase()
+        : '';
 
     /*
      * Formatage des montants
@@ -596,15 +621,52 @@ function Dashboard() {
                         {day} {Month}
                     </span>
 
-                    <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium border"
-                        style={{
-                            background: PURPLE_LIGHT,
-                            color: PURPLE_DARK,
-                            borderColor: '#AFA9EC',
-                        }}
-                    >
-                        JD
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setShowUserMenu((prev) => !prev)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium border cursor-pointer hover:opacity-80 transition-opacity"
+                            style={{
+                                background: PURPLE_LIGHT,
+                                color: PURPLE_DARK,
+                                borderColor: '#AFA9EC',
+                            }}
+                        >
+                            {userInitials || '??'}
+                        </button>
+
+                        {showUserMenu && (
+                            <div className="absolute right-0 top-10 z-50 w-48 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+
+                                {/* Informations utilisateur */}
+                                <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                                    <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                        {user
+                                            ? `${user.firstName} ${user.lastName}`
+                                            : 'Utilisateur'}
+                                    </div>
+
+                                    <div className="text-[11px] text-gray-400 truncate">
+                                        {user?.email ?? ''}
+                                    </div>
+                                </div>
+
+                                {/* Logout */}
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                                >
+                                    <span className="text-base">
+                                        ↪
+                                    </span>
+
+                                    <span>
+                                        Déconnexion
+                                    </span>
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                 </div>
@@ -659,8 +721,8 @@ function Dashboard() {
 
                         <div
                             className={`text-[11px] mt-1 ${m.up
-                                    ? 'text-emerald-600'
-                                    : 'text-red-500'
+                                ? 'text-emerald-600'
+                                : 'text-red-500'
                                 }`}
                         >
                             {m.change}
@@ -823,8 +885,8 @@ function Dashboard() {
 
                                     <div
                                         className={`text-[13px] font-medium shrink-0 ${transaction.type === 'income'
-                                                ? 'text-emerald-600'
-                                                : 'text-red-500'
+                                            ? 'text-emerald-600'
+                                            : 'text-red-500'
                                             }`}
                                     >
                                         {transaction.type === 'income'
