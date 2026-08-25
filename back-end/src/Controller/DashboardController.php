@@ -9,11 +9,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class DashboardController extends AbstractController
-{  
+{
     #[Route('/api/dashboard', name: 'api_dashboard', methods: ['GET'])]
     public function index(
         EntityManagerInterface $entityManager
     ): JsonResponse {
+
         $user = $this->getUser();
 
         if (!$user) {
@@ -43,9 +44,12 @@ final class DashboardController extends AbstractController
 
         $now = new \DateTimeImmutable();
 
-        $currentMonthStart = $now->modify('first day of this month')->setTime(0, 0, 0);
+        $currentMonthStart = $now
+            ->modify('first day of this month')
+            ->setTime(0, 0, 0);
 
-        $nextMonthStart = $currentMonthStart->modify('+1 month');
+        $nextMonthStart = $currentMonthStart
+            ->modify('+1 month');
 
         /*
          * ---------------------------------------------------------
@@ -58,21 +62,23 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 4. Variables pour les statistiques mensuelles
+         * 4. Données mensuelles
          * ---------------------------------------------------------
-         *
-         * Exemple :
-         *
-         * 2026-06
-         * 2026-07
-         * 2026-08
          */
 
         $monthlyData = [];
 
         /*
          * ---------------------------------------------------------
-         * 5. Parcourir les transactions
+         * 5. Dépenses par catégorie
+         * ---------------------------------------------------------
+         */
+
+        $categoryData = [];
+
+        /*
+         * ---------------------------------------------------------
+         * 6. Parcourir les transactions
          * ---------------------------------------------------------
          */
 
@@ -88,6 +94,34 @@ final class DashboardController extends AbstractController
 
             /*
              * -----------------------------------------------------
+             * Dépenses par catégorie
+             * -----------------------------------------------------
+             */
+
+            if ($transaction->getType() === 'expense') {
+
+                $category = $transaction->getCategory();
+
+                if ($category) {
+
+                    $categoryName = $category->getName();
+                    $categoryIcon = $category->getIcon();
+
+                    if (!isset($categoryData[$categoryName])) {
+
+                        $categoryData[$categoryName] = [
+                            'name' => $categoryName,
+                            'icon' => $categoryIcon,
+                            'amount' => 0.0,
+                        ];
+                    }
+
+                    $categoryData[$categoryName]['amount'] += $amount;
+                }
+            }
+
+            /*
+             * -----------------------------------------------------
              * Mois de la transaction
              * -----------------------------------------------------
              */
@@ -95,6 +129,7 @@ final class DashboardController extends AbstractController
             $monthKey = $date->format('Y-m');
 
             if (!isset($monthlyData[$monthKey])) {
+
                 $monthlyData[$monthKey] = [
                     'month' => $monthKey,
                     'income' => 0.0,
@@ -113,9 +148,6 @@ final class DashboardController extends AbstractController
 
                 $monthlyData[$monthKey]['income'] += $amount;
 
-                /*
-                 * Si la transaction appartient au mois actuel
-                 */
                 if (
                     $date >= $currentMonthStart &&
                     $date < $nextMonthStart
@@ -134,9 +166,6 @@ final class DashboardController extends AbstractController
 
                 $monthlyData[$monthKey]['expense'] += $amount;
 
-                /*
-                 * Si la transaction appartient au mois actuel
-                 */
                 if (
                     $date >= $currentMonthStart &&
                     $date < $nextMonthStart
@@ -148,11 +177,12 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 6. Calculer le reste de chaque mois
+         * 7. Calculer le reste de chaque mois
          * ---------------------------------------------------------
          */
 
         foreach ($monthlyData as &$month) {
+
             $month['remaining'] =
                 $month['income'] - $month['expense'];
         }
@@ -161,7 +191,7 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 7. Trier les mois du plus récent au plus ancien
+         * 8. Trier les mois
          * ---------------------------------------------------------
          */
 
@@ -169,7 +199,7 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 8. Calculer le solde du mois actuel
+         * 9. Calculer le solde actuel
          * ---------------------------------------------------------
          */
 
@@ -177,17 +207,8 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 9. Calculer l'épargne cumulée
+         * 10. Calculer l'épargne cumulée
          * ---------------------------------------------------------
-         *
-         * Exemple :
-         *
-         * Août     +150 000
-         * Juillet  +200 000
-         *
-         * Saving = 350 000
-         *
-         * On additionne uniquement les mois jusqu'au mois actuel.
          */
 
         $saving = 0.0;
@@ -210,7 +231,7 @@ final class DashboardController extends AbstractController
 
         /*
          * ---------------------------------------------------------
-         * 10. Préparer les transactions pour le frontend
+         * 11. Préparer les transactions
          * ---------------------------------------------------------
          */
 
@@ -223,26 +244,48 @@ final class DashboardController extends AbstractController
                 'amount' => $transaction->getAmount(),
                 'type' => $transaction->getType(),
                 'description' => $transaction->getDescription(),
-                'date' => $transaction->getTransactionDate()?->format('Y-m-d'),
-                'category' => $transaction->getCategory()?->getName(),
+                'date' => $transaction
+                    ->getTransactionDate()
+                    ?->format('Y-m-d'),
+                'category' => $transaction
+                    ->getCategory()
+                    ?->getName(),
             ];
         }
 
         /*
          * ---------------------------------------------------------
-         * 11. Réponse JSON
+         * 12. Trier les catégories par montant décroissant
+         * ---------------------------------------------------------
+         */
+
+        usort(
+            $categoryData,
+            fn (array $a, array $b) =>
+                $b['amount'] <=> $a['amount']
+        );
+
+        /*
+         * ---------------------------------------------------------
+         * 13. Réponse JSON
          * ---------------------------------------------------------
          */
 
         return new JsonResponse([
+
             'balance' => $balance,
+
             'income' => $currentIncome,
+
             'expense' => $currentExpense,
+
             'saving' => $saving,
 
             'transactions' => $transactionData,
 
             'monthly' => array_values($monthlyData),
+
+            'categories' => array_values($categoryData),
         ]);
     }
 }
