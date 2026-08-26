@@ -9,6 +9,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
+
         const token = localStorage.getItem('token');
 
         if (token) {
@@ -27,7 +28,20 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response?.status === 401) {
+
+        const status = error.response?.status;
+        const url = error.config?.url;
+
+        /*
+         * 401 sur une route protégée
+         *
+         * On ne fait PAS la redirection
+         * si l'erreur vient de /login.
+         */
+        if (
+            status === 401 &&
+            !url?.includes('/login')
+        ) {
             localStorage.removeItem('token');
 
             window.location.href = '/login';

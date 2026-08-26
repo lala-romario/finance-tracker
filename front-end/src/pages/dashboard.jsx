@@ -113,33 +113,73 @@ function Dashboard() {
 
     const handleSubmitTransaction = async (event) => {
         event.preventDefault();
+
         setTransactionError(null);
 
+        // Validation du montant
         if (!amount || Number(amount) <= 0) {
-            setTransactionError('Veuillez entrer un montant valide.');
+            setTransactionError(
+                'Veuillez entrer un montant valide.'
+            );
             return;
         }
 
+        // Vérification du solde pour une dépense
+        if (
+            transactionType === 'expense' &&
+            Number(amount) > currentBalance
+        ) {
+            setTransactionError(
+                `Solde insuffisant. Votre solde actuel est de ${formatAmount(currentBalance)} Ar.`
+            );
+            return;
+        }
+
+        // Validation catégorie
         if (!category.trim()) {
-            setTransactionError('Veuillez sélectionner une catégorie.');
+            setTransactionError(
+                'Veuillez sélectionner une catégorie.'
+            );
             return;
         }
 
         try {
             setSubmitting(true);
-            await api.post('/transactions', {
-                amount: Number(amount),
+
+            const response = await api.post('/transactions', {
+                amount: amount,
                 type: transactionType,
                 category: category.trim(),
                 description: description.trim() || null,
             });
 
-            handleCloseModal();
+            console.log(
+                'Transaction créée :',
+                response.data
+            );
+
+            setShowTransactionModal(false);
+
+            setAmount('');
+            setCategory('');
+            setDescription('');
+
             await fetchDashboard();
-        } catch (err) {
-            console.error('Erreur lors de la création de la transaction :', err);
-            const backendMessage = err.response?.data?.error || err.response?.data?.message;
-            setTransactionError(backendMessage || 'Impossible de créer la transaction.');
+
+        } catch (error) {
+            console.error(
+                'Erreur lors de la création de la transaction :',
+                error
+            );
+
+            const backendMessage =
+                error.response?.data?.error ||
+                error.response?.data?.message;
+
+            setTransactionError(
+                backendMessage ||
+                'Impossible de créer la transaction.'
+            );
         } finally {
             setSubmitting(false);
         }
@@ -159,6 +199,7 @@ function Dashboard() {
     const income = dashboard?.income ?? 0;
     const expense = dashboard?.expense ?? 0;
     const saving = dashboard?.saving ?? (income - expense);
+    const currentBalance = Number(balance);
 
     const userInitials = useMemo(() => {
         if (!user) return '??';
