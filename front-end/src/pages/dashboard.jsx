@@ -4,11 +4,15 @@ import api from '../api/axios';
 
 import Dashboard from '../components/dashboard';
 import Transactions from '../components/transactions';
+import Analyses from '../components/analysis';
+import Objectifs from '../components/goal';
+import TransactionsRecurrentes from '../components/recurringTransactions';
+import AssistantFinancier from '../components/financialAssistant';
 
 function DashboardPage() {
 
     // =========================================================
-    // Dashboard & User State
+    // DASHBOARD & USER
     // =========================================================
 
     const [dashboard, setDashboard] = useState(null);
@@ -18,13 +22,14 @@ function DashboardPage() {
     const [error, setError] = useState(null);
 
     // =========================================================
-    // Navigation
+    // NAVIGATION
     // =========================================================
 
-    const [activeSection, setActiveSection] = useState('dashboard');
+    const [activeSection, setActiveSection] =
+        useState('dashboard');
 
     // =========================================================
-    // Transaction Modal
+    // TRANSACTION MODAL
     // =========================================================
 
     const [showTransactionModal, setShowTransactionModal] =
@@ -41,13 +46,13 @@ function DashboardPage() {
     const [transactionError, setTransactionError] = useState(null);
 
     // =========================================================
-    // User Menu
+    // USER MENU
     // =========================================================
 
     const [showUserMenu, setShowUserMenu] = useState(false);
 
     // =========================================================
-    // Categories
+    // CATEGORIES
     // =========================================================
 
     const INCOME_CATEGORIES = [
@@ -122,14 +127,15 @@ function DashboardPage() {
     ];
 
     // =========================================================
-    // API - Dashboard
+    // FETCH DASHBOARD
     // =========================================================
 
     const fetchDashboard = async () => {
 
         try {
 
-            const response = await api.get('/dashboard');
+            const response =
+                await api.get('/dashboard');
 
             setDashboard(response.data);
 
@@ -157,21 +163,22 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // API - User
+    // FETCH USER
     // =========================================================
 
     const fetchUser = async () => {
 
         try {
 
-            const response = await api.get('/me');
+            const response =
+                await api.get('/me');
 
             setUser(response.data.user);
 
         } catch (err) {
 
             console.error(
-                'ERREUR USER:',
+                'Erreur utilisateur :',
                 err
             );
 
@@ -179,7 +186,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // Initialisation
+    // INITIALISATION
     // =========================================================
 
     useEffect(() => {
@@ -198,7 +205,7 @@ function DashboardPage() {
     }, []);
 
     // =========================================================
-    // Logout
+    // LOGOUT
     // =========================================================
 
     const handleLogout = async () => {
@@ -226,7 +233,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // Open Transaction Modal
+    // OPEN TRANSACTION MODAL
     // =========================================================
 
     const openModal = (type) => {
@@ -243,7 +250,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // Close Transaction Modal
+    // CLOSE TRANSACTION MODAL
     // =========================================================
 
     const handleCloseModal = () => {
@@ -262,7 +269,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // Format Amount
+    // FORMAT AMOUNT
     // =========================================================
 
     const formatAmount = (value) => {
@@ -276,7 +283,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // Submit Transaction
+    // SUBMIT TRANSACTION
     // =========================================================
 
     const handleSubmitTransaction = async (event) => {
@@ -286,7 +293,7 @@ function DashboardPage() {
         setTransactionError(null);
 
         // -----------------------------------------------------
-        // Validation montant
+        // Montant
         // -----------------------------------------------------
 
         if (
@@ -311,7 +318,7 @@ function DashboardPage() {
             );
 
         // -----------------------------------------------------
-        // Vérification solde pour dépense
+        // Vérification dépense
         // -----------------------------------------------------
 
         if (
@@ -329,7 +336,7 @@ function DashboardPage() {
         }
 
         // -----------------------------------------------------
-        // Validation catégorie
+        // Catégorie
         // -----------------------------------------------------
 
         if (!category.trim()) {
@@ -345,17 +352,19 @@ function DashboardPage() {
 
             setSubmitting(true);
 
-            const response = await api.post(
-                '/transactions',
-                {
-                    amount: amount,
-                    type: transactionType,
-                    category: category.trim(),
-                    description:
-                        description.trim() ||
-                        null,
-                }
-            );
+            const response =
+                await api.post(
+                    '/transactions',
+                    {
+                        amount,
+                        type: transactionType,
+                        category:
+                            category.trim(),
+                        description:
+                            description.trim() ||
+                            null,
+                    }
+                );
 
             console.log(
                 'Transaction créée :',
@@ -365,12 +374,12 @@ function DashboardPage() {
             // Fermer modal
             setShowTransactionModal(false);
 
-            // Reset formulaire
+            // Reset
             setAmount('');
             setCategory('');
             setDescription('');
 
-            // Rafraîchir dashboard
+            // Mise à jour dashboard
             await fetchDashboard();
 
         } catch (error) {
@@ -397,7 +406,7 @@ function DashboardPage() {
     };
 
     // =========================================================
-    // User Initials
+    // USER INITIALS
     // =========================================================
 
     const userInitials = user
@@ -405,7 +414,184 @@ function DashboardPage() {
         : '??';
 
     // =========================================================
-    // Render
+    // NAVIGATION ITEMS
+    // =========================================================
+
+    const navigationItems = [
+        {
+            id: 'dashboard',
+            label: 'Dashboard',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                    />
+                </svg>
+            ),
+        },
+
+        {
+            id: 'transactions',
+            label: 'Transactions',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"
+                    />
+                </svg>
+            ),
+        },
+
+        {
+            id: 'analyses',
+            label: 'Analyses',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 3v18h18M7 16l4-5 3 3 5-7"
+                    />
+                </svg>
+            ),
+        },
+
+        {
+            id: 'objectifs',
+            label: 'Objectifs',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 15l3.5 2-1-4 3-2.5-4-.5L12 6l-1.5 4-4 .5 3 2.5-1 4L12 15z"
+                    />
+                </svg>
+            ),
+        },
+
+        {
+            id: 'recurrentes',
+            label: 'Transactions récurrentes',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 7h11l-3-3m8 13H9l3 3M20 7a8 8 0 00-14-4M4 17a8 8 0 0014 4"
+                    />
+                </svg>
+            ),
+        },
+
+        {
+            id: 'assistant',
+            label: 'Assistant financier',
+            icon: (
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9.5 3h5A3.5 3.5 0 0118 6.5v5A3.5 3.5 0 0114.5 15h-5A3.5 3.5 0 016 11.5v-5A3.5 3.5 0 019.5 3zM9 19h6m-3-4v4"
+                    />
+                </svg>
+            ),
+        },
+    ];
+
+    // =========================================================
+    // CONTENT
+    // =========================================================
+
+    const renderContent = () => {
+
+        switch (activeSection) {
+
+            case 'transactions':
+
+                return (
+                    <Transactions />
+                );
+
+            case 'analyses':
+
+                return (
+                    <Analyses />
+                );
+
+            case 'objectifs':
+
+                return (
+                    <Objectifs />
+                );
+
+            case 'recurrentes':
+
+                return (
+                    <TransactionsRecurrentes />
+                );
+
+            case 'assistant':
+
+                return (
+                    <AssistantFinancier />
+                );
+
+            case 'dashboard':
+            default:
+
+                return (
+                    <Dashboard
+                        dashboard={dashboard}
+                        loading={loading}
+                        error={error}
+                    />
+                );
+        }
+    };
+
+    // =========================================================
+    // RENDER
     // =========================================================
 
     return (
@@ -441,9 +627,7 @@ function DashboardPage() {
 
                     </div>
 
-                    {/* =================================================
-                        QUICK ACTIONS
-                    ================================================= */}
+                    {/* QUICK ACTIONS */}
 
                     <div className="space-y-2 mb-8">
 
@@ -501,88 +685,46 @@ function DashboardPage() {
 
                     </div>
 
-                    {/* =================================================
-                        NAVIGATION
-                    ================================================= */}
+                    {/* NAVIGATION */}
 
                     <nav className="space-y-1">
 
-                        {/* DASHBOARD */}
+                        {navigationItems.map(
+                            (item) => (
 
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setActiveSection(
-                                    'dashboard'
-                                )
-                            }
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-xs transition-colors ${
-                                activeSection ===
-                                'dashboard'
-                                    ? 'bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400'
-                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                            }`}
-                        >
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    onClick={() =>
+                                        setActiveSection(
+                                            item.id
+                                        )
+                                    }
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-medium transition-colors ${
+                                        activeSection ===
+                                        item.id
+                                            ? 'bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400'
+                                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                    }`}
+                                >
 
-                            <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                                />
-                            </svg>
+                                    {item.icon}
 
-                            Dashboard
+                                    <span>
+                                        {item.label}
+                                    </span>
 
-                        </button>
+                                </button>
 
-                        {/* TRANSACTIONS */}
-
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setActiveSection(
-                                    'transactions'
-                                )
-                            }
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-xs transition-colors ${
-                                activeSection ===
-                                'transactions'
-                                    ? 'bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400'
-                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                            }`}
-                        >
-
-                            <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 01-2-2h2a2 2 0 012 2"
-                                />
-                            </svg>
-
-                            Transactions
-
-                        </button>
+                            )
+                        )}
 
                     </nav>
 
                 </div>
 
                 {/* =================================================
-                    USER MENU
+                    USER
                 ================================================= */}
 
                 <div className="relative pt-4 border-t border-gray-100 dark:border-gray-800">
@@ -622,7 +764,7 @@ function DashboardPage() {
 
                     </button>
 
-                    {/* USER MENU DROPDOWN */}
+                    {/* USER DROPDOWN */}
 
                     {showUserMenu && (
 
@@ -630,7 +772,9 @@ function DashboardPage() {
 
                             <button
                                 type="button"
-                                onClick={handleLogout}
+                                onClick={
+                                    handleLogout
+                                }
                                 className="w-full px-4 py-3 text-left text-xs text-rose-500 font-medium hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors flex items-center gap-2"
                             >
 
@@ -660,33 +804,19 @@ function DashboardPage() {
 
             </aside>
 
-            {/* =====================================================
+            {/* =================================================
                 MAIN CONTENT
-            ===================================================== */}
+            ================================================= */}
 
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto">
 
-                {activeSection === 'dashboard' && (
-
-                    <Dashboard
-                        dashboard={dashboard}
-                        loading={loading}
-                        error={error}
-                    />
-
-                )}
-
-                {activeSection === 'transactions' && (
-
-                    <Transactions />
-
-                )}
+                {renderContent()}
 
             </main>
 
-            {/* =====================================================
+            {/* =================================================
                 TRANSACTION MODAL
-            ===================================================== */}
+            ================================================= */}
 
             {showTransactionModal && (
 
@@ -694,7 +824,7 @@ function DashboardPage() {
 
                     <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border border-gray-100 dark:border-gray-800">
 
-                        {/* MODAL HEADER */}
+                        {/* HEADER */}
 
                         <div className="flex justify-between items-center mb-4">
 
@@ -728,7 +858,7 @@ function DashboardPage() {
                             className="space-y-4"
                         >
 
-                            {/* AMOUNT */}
+                            {/* MONTANT */}
 
                             <div>
 
@@ -753,7 +883,7 @@ function DashboardPage() {
 
                             </div>
 
-                            {/* CATEGORY */}
+                            {/* CATEGORIE */}
 
                             <div>
 
@@ -782,6 +912,7 @@ function DashboardPage() {
                                             : EXPENSE_CATEGORIES
                                     ).map(
                                         (item) => (
+
                                             <option
                                                 key={
                                                     item.value
@@ -797,6 +928,7 @@ function DashboardPage() {
                                                     item.label
                                                 }
                                             </option>
+
                                         )
                                     )}
 
@@ -813,7 +945,9 @@ function DashboardPage() {
                                 </label>
 
                                 <textarea
-                                    value={description}
+                                    value={
+                                        description
+                                    }
                                     onChange={(event) =>
                                         setDescription(
                                             event.target.value
