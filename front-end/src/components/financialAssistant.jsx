@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import api from '../api/axios';
-import Theme from '../components/dark.mode';
 
 const PRESET_QUESTIONS = [
   "Quel est le bilan de ce mois ?",
@@ -72,7 +71,7 @@ function FinancialAssistant() {
   }, [transactions]);
 
   const formatAmount = (val) =>
-    new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(Number(val));
+    new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Number(val));
 
   // Générateur de réponses basées sur les règles financières
   const generateResponse = (query) => {
@@ -112,7 +111,6 @@ function FinancialAssistant() {
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputQuery('');
 
-    // Simulation de réponse automatique
     setTimeout(() => {
       const replyText = generateResponse(text);
       const assistantMsg = { id: Date.now() + 1, sender: 'assistant', text: replyText };
@@ -122,8 +120,8 @@ function FinancialAssistant() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-center py-20">
+        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
           <div className="w-4 h-4 rounded-full border-2 border-purple-600 border-t-transparent animate-spin" />
           Initialisation de l'assistant...
         </div>
@@ -132,93 +130,97 @@ function FinancialAssistant() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans p-4 sm:p-6 lg:p-10 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
+      
+      {/* HEADER DE SECTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <span>🤖</span> Assistant Financier
+          </h1>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Pose des questions sur tes transactions et obtiens des conseils sur mesure.
+          </p>
+        </div>
+      </div>
+
+      {error && (
+        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs">
+          {error}
+        </div>
+      )}
+
+      {/* CHAT CONTAINER */}
+      <div className="bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col h-[560px] overflow-hidden">
         
-        {/* HEADER */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>🤖</span> Assistant Financier
-            </h1>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Pose des questions sur tes transactions et obtiens des conseils instantanés.
-            </p>
-          </div>
-          <Theme />
-        </div>
-
-        {error && (
-          <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 text-rose-500 text-xs">
-            {error}
-          </div>
-        )}
-
-        {/* CONTENEUR DU CHAT */}
-        <div className="bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col h-[520px] overflow-hidden">
-          
-          {/* ZONE DE MESSAGES */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
-            {messages.map((msg) => {
-              const isUser = msg.sender === 'user';
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-xs leading-relaxed ${
-                      isUser
-                        ? 'bg-purple-600 text-white rounded-br-none shadow-md shadow-purple-600/10'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none border border-gray-200/50 dark:border-gray-700/50'
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* QUESTIONS PRÉDÉFINIES (SUGGESTIONS) */}
-          <div className="px-4 py-2 border-t border-gray-100 dark:border-gray-800/60 flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {PRESET_QUESTIONS.map((q, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSendMessage(q)}
-                className="whitespace-nowrap px-3 py-1.5 rounded-xl border border-purple-200 dark:border-purple-900/50 bg-purple-50/50 dark:bg-purple-950/30 text-[11px] font-medium text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
+        {/* MESSAGES */}
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          {messages.map((msg) => {
+            const isUser = msg.sender === 'user';
+            return (
+              <div
+                key={msg.id}
+                className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
               >
-                {q}
-              </button>
-            ))}
-          </div>
-
-          {/* BARRE D'ENTRÉE */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="p-3 border-t border-gray-100 dark:border-gray-800 flex items-center gap-2 bg-gray-50/50 dark:bg-gray-900/50"
-          >
-            <input
-              type="text"
-              placeholder="Pose une question sur tes finances..."
-              value={inputQuery}
-              onChange={(e) => setInputQuery(e.target.value)}
-              className="flex-1 px-4 py-2.5 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
-            />
-            <button
-              type="submit"
-              disabled={!inputQuery.trim()}
-              className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1 shadow-md shadow-purple-600/20 active:scale-[0.98]"
-            >
-              Envoyer
-            </button>
-          </form>
-
+                {!isUser && (
+                  <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 font-bold text-xs flex items-center justify-center mr-2.5 shrink-0">
+                    🤖
+                  </div>
+                )}
+                <div
+                  className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl text-xs leading-relaxed ${
+                    isUser
+                      ? 'bg-purple-600 text-white rounded-br-xs shadow-sm'
+                      : 'bg-gray-50 dark:bg-gray-800/80 text-gray-800 dark:text-gray-100 rounded-bl-xs border border-gray-100 dark:border-gray-700/50'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
         </div>
+
+        {/* SUGGESTIONS */}
+        <div className="px-4 py-2.5 bg-gray-50/50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800/60 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          {PRESET_QUESTIONS.map((q, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSendMessage(q)}
+              className="whitespace-nowrap px-3 py-1.5 rounded-xl border border-purple-200/60 dark:border-purple-900/50 bg-purple-50/40 dark:bg-purple-950/20 text-[11px] font-medium text-purple-600 dark:text-purple-300 hover:bg-purple-100/60 dark:hover:bg-purple-900/40 transition-colors shrink-0"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+
+        {/* INPUT BAR */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage();
+          }}
+          className="p-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center gap-2 bg-white dark:bg-gray-900"
+        >
+          <input
+            type="text"
+            placeholder="Pose une question sur tes finances..."
+            value={inputQuery}
+            onChange={(e) => setInputQuery(e.target.value)}
+            className="flex-1 px-4 py-2.5 text-xs bg-gray-50 dark:bg-gray-800/60 border border-gray-200/80 dark:border-gray-700/60 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600/50 dark:focus:ring-purple-500/50 transition-all"
+          />
+          <button
+            type="submit"
+            disabled={!inputQuery.trim()}
+            className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-semibold rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-sm active:scale-[0.98] shrink-0"
+          >
+            <span>Envoyer</span>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </form>
 
       </div>
     </div>
