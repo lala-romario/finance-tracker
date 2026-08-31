@@ -12,11 +12,46 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class TransactionController extends AbstractController
 {
+    #[Route('/api/transactions', name: 'api_transactions_list', methods: ['GET'])]
+    public function index(
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+
+        $user = $this->getUser();
+
+        $transactions = $entityManager
+            ->getRepository(Transaction::class)
+            ->findBy(
+                ['owner' => $user],
+                ['transactionDate' => 'DESC']
+            );
+
+        $data = array_map(
+            function (Transaction $transaction) {
+                return [
+                    'id' => $transaction->getId(),
+                    'amount' => $transaction->getAmount(),
+                    'type' => $transaction->getType(),
+                    'description' => $transaction->getDescription(),
+                    'date' => $transaction->getTransactionDate()?->format('Y-m-d'),
+                    'category' => $transaction->getCategory()?->getName(),
+                ];
+            },
+            $transactions
+        );
+
+        return new JsonResponse([
+            'transactions' => $data,
+        ]);
+    }
+
+
     #[Route('/api/transactions', name: 'api_transactions_create', methods: ['POST'])]
     public function create(
         Request $request,
         EntityManagerInterface $entityManager
     ): JsonResponse {
+
         $user = $this->getUser();
 
         $data = json_decode($request->getContent(), true);
