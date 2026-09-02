@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api',
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -9,7 +9,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-
         const token = localStorage.getItem('token');
 
         if (token) {
@@ -28,16 +27,9 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-
         const status = error.response?.status;
         const url = error.config?.url;
 
-        /*
-         * 401 sur une route protégée
-         *
-         * On ne fait PAS la redirection
-         * si l'erreur vient de /login.
-         */
         if (
             status === 401 &&
             !url?.includes('/login')
