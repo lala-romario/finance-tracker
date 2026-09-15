@@ -37,4 +37,4 @@ RUN mkdir -p var/cache var/log \
     && chown -R www-data:www-data var
 
 # Lancer Symfony
-CMD ["sh", "-c", "php bin/console cache:clear --env=prod && php -S 0.0.0.0:${PORT:-10000} -t public"]
+CMD ["sh", "-c", "php bin/console cache:clear --env=prod && php -S 0.0.0.0:${PORT} -t public"]
