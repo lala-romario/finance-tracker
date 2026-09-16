@@ -55,10 +55,10 @@ function Login() {
           <Link to="/">
             <div className="flex items-center gap-3 relative z-10">
               <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                F
+                A
               </div>
               <span className="font-bold text-lg tracking-wide text-white">
-                FinanceTracker
+                Alovako
               </span>
             </div>
           </Link>
@@ -93,7 +93,7 @@ function Login() {
                 F
               </div>
               <span className="font-bold text-base text-gray-900 dark:text-white tracking-wide">
-                FinanceTracker
+                Alovako
               </span>
             </Link>
             <Theme />

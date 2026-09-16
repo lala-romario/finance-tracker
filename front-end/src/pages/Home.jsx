@@ -15,10 +15,10 @@ function Home() {
                     {/* Logo */}
                     <div className="flex items-center gap-2 sm:gap-3">
                         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-purple-500/20">
-                            F
+                            A
                         </div>
                         <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-white tracking-wide">
-                            FinanceTracker
+                            Alovako
                         </span>
                     </div>
 
@@ -227,7 +227,7 @@ function Home() {
 
             {/* FOOTER */}
             <footer className="border-t border-gray-200/80 dark:border-gray-800 py-6 text-center text-xs text-gray-400">
-                © {new Date().getFullYear()} FinanceTracker. Tous droits réservés.
+                © {new Date().getFullYear()} Alovako. Tous droits réservés.
             </footer>
         </div>
     );

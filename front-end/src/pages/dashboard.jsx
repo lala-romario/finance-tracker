@@ -197,7 +197,7 @@ function DashboardPage() {
                         F
                     </div>
                     <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
-                        FinanceTracker
+                        Alovako
                     </span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -218,11 +218,11 @@ function DashboardPage() {
                     <div className="flex items-center justify-between w-full mb-6">
                         <div className="flex items-center gap-2.5">
                             <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-purple-500/20">
-                                F
+                                A
                             </div>
                             <div>
                                 <h1 className="text-base font-bold leading-none text-gray-900 dark:text-white">
-                                    FinanceTracker
+                                    Alovako
                                 </h1>
                                 <span className="text-[11px] text-gray-400 block">
                                     Personal Dashboard
