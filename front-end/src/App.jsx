@@ -9,20 +9,21 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
     return (
-        <Routes>
-            {/* Home */}
-            <Route path='/' element={<Home />} />
+        <div className="w-full max-w-full overflow-x-hidden min-h-screen">
+            <Routes>
+                {/* Home */}
+                <Route path='/' element={<Home />} />
 
-            {/* Routes publiques */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+                {/* Routes publiques */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
 
-            {/* Routes protégées */}
-            <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-            </Route>
-
-        </Routes>
+                {/* Routes protégées */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
+            </Routes>
+        </div>
     );
 }
 

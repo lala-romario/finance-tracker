@@ -131,7 +131,15 @@ function FinancialAssistant() {
 
   return (
     <div className="space-y-6">
-      
+
+      {/* BANNIÈRE DE DÉVELOPPEMENT */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/50 flex items-center gap-3 text-amber-800 dark:text-amber-300 shadow-xs">
+        <span className="text-lg">🚧</span>
+        <div className="text-xs">
+          <span className="font-bold">Fonctionnalité en cours de développement :</span> Cette section est actuellement en cours de conception. Certaines fonctionnalités ou données affichées peuvent encore évoluer.
+        </div>
+      </div>
+
       {/* HEADER DE SECTION */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>

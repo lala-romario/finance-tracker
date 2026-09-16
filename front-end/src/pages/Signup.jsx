@@ -9,6 +9,7 @@ function Signup() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -54,12 +55,12 @@ function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 flex items-center justify-center p-4 sm:p-6 font-sans relative">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 flex items-center justify-center p-4 sm:p-6 font-sans">
 
-            <div className="w-full max-w-4xl bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[620px]">
+            <div className="w-full max-w-4xl bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-12 md:min-h-[620px]">
 
-                {/* PANEL GAUCHE : Branding & Visuel (5 colonnes) */}
-                <div className="md:col-span-5 bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-950 p-8 sm:p-10 text-white flex flex-col justify-between relative overflow-hidden">
+                {/* PANEL GAUCHE : Branding & Visuel (Masqué sur mobile avec 'hidden md:flex') */}
+                <div className="hidden md:flex md:col-span-5 bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-950 p-8 sm:p-10 text-white flex-col justify-between relative overflow-hidden">
                     {/* Glow background effects */}
                     <div className="absolute -top-24 -left-24 w-60 h-60 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-24 -right-24 w-60 h-60 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -99,8 +100,27 @@ function Signup() {
                     </div>
                 </div>
 
-                {/* PANEL DROIT : Formulaire d'inscription (7 colonnes) */}
-                <div className="md:col-span-7 p-8 sm:p-10 flex flex-col justify-center bg-white dark:bg-gray-900">
+                {/* PANEL DROIT : Formulaire d'inscription (Complet mais épuré sur mobile) */}
+                <div className="md:col-span-7 p-6 sm:p-10 flex flex-col justify-center bg-white dark:bg-gray-900 relative">
+
+                    {/* Header Mobile Uniquement (Masqué sur Desktop) */}
+                    <div className="flex md:hidden items-center justify-between mb-6">
+                        <Link to="/" className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-purple-500/20">
+                                F
+                            </div>
+                            <span className="font-bold text-base text-gray-900 dark:text-white tracking-wide">
+                                FinanceTracker
+                            </span>
+                        </Link>
+                        <Theme />
+                    </div>
+
+                    {/* Bouton Thème sur Desktop uniquement */}
+                    <div className="hidden md:block absolute top-6 right-6">
+                        <Theme />
+                    </div>
+
                     <div className="max-w-sm w-full mx-auto">
 
                         {/* Form Header */}
@@ -139,7 +159,7 @@ function Signup() {
                                         name="firstname"
                                         required
                                         placeholder="John"
-                                        className="w-full px-3.5 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
+                                        className="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
                                     />
                                 </div>
 
@@ -153,7 +173,7 @@ function Signup() {
                                         name="lastname"
                                         required
                                         placeholder="Doe"
-                                        className="w-full px-3.5 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
+                                        className="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
                                     />
                                 </div>
                             </div>
@@ -168,7 +188,7 @@ function Signup() {
                                     name="email"
                                     required
                                     placeholder="nom@exemple.com"
-                                    className="w-full px-3.5 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
+                                    className="w-full px-3.5 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
                                 />
                             </div>
 
@@ -177,20 +197,39 @@ function Signup() {
                                 <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
                                     Mot de passe
                                 </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    required
-                                    placeholder="••••••••"
-                                    className="w-full px-3.5 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        required
+                                        placeholder="••••••••"
+                                        className="w-full pl-3.5 pr-11 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-600 dark:focus:ring-purple-500 transition-all"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1"
+                                        aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                                    >
+                                        {showPassword ? (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a8.962 8.962 0 012.122-.163c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21M3 3l18 18" />
+                                            </svg>
+                                        ) : (
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
                             {/* BUTTON */}
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-2.5 px-4 mt-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold tracking-wide transition-all duration-200 shadow-md shadow-purple-600/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-3 px-4 mt-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold tracking-wide transition-all duration-200 shadow-md shadow-purple-600/20 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>

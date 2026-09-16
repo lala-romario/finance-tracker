@@ -9,31 +9,41 @@ function Home() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-purple-600/10 dark:bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute top-1/3 -right-24 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* HEADER / NAVIGATION */}
-            <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-20">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-purple-500/20">
-                        F
-                    </div>
-                    <span className="font-bold text-lg text-gray-900 dark:text-white tracking-wide">
-                        FinanceTracker
-                    </span>
-                </div>
+            <header className="sticky top-0 z-50 backdrop-blur-md bg-gray-50/80 dark:bg-gray-950/80 border-b border-gray-200/50 dark:border-gray-800/50 transition-colors duration-300">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
 
-                <div className="flex items-center gap-4">
-                    <Theme />
-                    <Link
-                        to="/login"
-                        className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition-all"
-                    >
-                        Se connecter
-                    </Link>
-                    <Link
-                        to="/signup"
-                        className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md shadow-purple-600/20 active:scale-[0.98]"
-                    >
-                        S'inscrire
-                    </Link>
+                    {/* Logo */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-lg shadow-purple-500/20">
+                            F
+                        </div>
+                        <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-white tracking-wide">
+                            FinanceTracker
+                        </span>
+                    </div>
+
+                    {/* Controls */}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Bouton Theme */}
+                        <Theme />
+
+                        {/* Masqué sur mobile, visible à partir de 'sm' (640px) */}
+                        <Link
+                            to="/login"
+                            className="hidden sm:block px-4 py-2 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition-all"
+                        >
+                            Se connecter
+                        </Link>
+
+                        {/* Bouton CTA réduit légèrement sur mobile */}
+                        <Link
+                            to="/signup"
+                            className="px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md shadow-purple-600/20 active:scale-[0.98]"
+                        >
+                            S'inscrire
+                        </Link>
+                    </div>
+
                 </div>
             </header>
 

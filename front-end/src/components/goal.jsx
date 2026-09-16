@@ -168,7 +168,6 @@ function Goals() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Theme />
             <button
               onClick={() => setShowAddModal(true)}
               className="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-600/20 transition-all flex items-center gap-2 active:scale-[0.98]"
