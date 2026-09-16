@@ -159,7 +159,6 @@ function Transactions() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Theme />
             <button
               onClick={handleExportCSV}
               disabled={filteredTransactions.length === 0}
