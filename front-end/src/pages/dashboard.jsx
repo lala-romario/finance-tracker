@@ -194,7 +194,7 @@ function DashboardPage() {
             <header className="md:hidden sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800/80 px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-base shadow-md shadow-purple-500/20 shrink-0">
-                        F
+                        A
                     </div>
                     <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
                         Alovako
