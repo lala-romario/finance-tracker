@@ -121,4 +121,46 @@ final class TransactionController extends AbstractController
             ],
         ], 201);
     }
+
+
+    #[Route('/api/transactions/current-month', name: 'api_transactions_reset_current_month', methods: ['DELETE'])]
+    public function resetCurrentMonth(
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+
+        $user = $this->getUser();
+
+        // Début du mois courant
+        $startOfMonth = new \DateTimeImmutable('first day of this month 00:00:00');
+
+        // Début du mois suivant
+        $startOfNextMonth = $startOfMonth->modify('+1 month');
+
+        // Récupérer uniquement les transactions de l'utilisateur
+        // comprises dans le mois courant
+        $transactions = $entityManager
+            ->getRepository(Transaction::class)
+            ->createQueryBuilder('t')
+            ->where('t.owner = :user')
+            ->andWhere('t.transactionDate >= :start')
+            ->andWhere('t.transactionDate < :end')
+            ->setParameter('user', $user)
+            ->setParameter('start', $startOfMonth)
+            ->setParameter('end', $startOfNextMonth)
+            ->getQuery()
+            ->getResult();
+
+        $count = count($transactions);
+
+        foreach ($transactions as $transaction) {
+            $entityManager->remove($transaction);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'message' => 'Current month transactions reset successfully.',
+            'deleted' => $count,
+        ]);
+    }
 }

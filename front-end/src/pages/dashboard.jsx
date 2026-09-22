@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import React from 'react';
+import { resetCurrentMonthTransactions } from '../api/transactions';
 
 import api from '../api/axios';
 
@@ -10,7 +12,11 @@ import TransactionsRecurrentes from '../components/recurringTransactions';
 import AssistantFinancier from '../components/financialAssistant';
 import Theme from '../components/dark.mode';
 
+
+
 function DashboardPage() {
+    const [resetting, setResetting] = useState(false);
+
     const [dashboard, setDashboard] = useState(null);
     const [user, setUser] = useState(null);
 
@@ -50,6 +56,40 @@ function DashboardPage() {
         { value: 'Abonnements', label: 'Abonnements', icon: '📱' },
         { value: 'Autres dépenses', label: 'Autres dépenses', icon: '📦' },
     ];
+
+
+    const handleResetCurrentMonth = async () => {
+        const confirmed = window.confirm(
+            '⚠️ Voulez-vous vraiment supprimer toutes les transactions du mois courant ? Cette action est irréversible.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setResetting(true);
+
+            const result = await resetCurrentMonthTransactions();
+
+            console.log('Transactions supprimées:', result.deleted);
+
+            await fetchDashboard();
+
+        } catch (error) {
+            console.error(
+                'Erreur lors de la réinitialisation:',
+                error
+            );
+
+            alert(
+                error.response?.data?.error ||
+                'Impossible de réinitialiser les transactions.'
+            );
+        } finally {
+            setResetting(false);
+        }
+    };
 
     const fetchDashboard = async () => {
         try {
@@ -167,12 +207,12 @@ function DashboardPage() {
         : '??';
 
     const navigationItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg> ) },
-        { id: 'transactions', label: 'Transactions', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" /></svg> ) },
-        { id: 'analyses', label: 'Analyses', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3v18h18M7 16l4-5 3 3 5-7" /></svg> ) },
-        { id: 'objectifs', label: 'Objectifs', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15l3.5 2-1-4 3-2.5-4-.5L12 6l-1.5 4-4 .5 3 2.5-1 4L12 15z" /></svg> ) },
-        { id: 'recurrentes', label: 'Récurrentes', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7h11l-3-3m8 13H9l3 3M20 7a8 8 0 00-14-4M4 17a8 8 0 0014 4" /></svg> ) },
-        { id: 'assistant', label: 'Assistant', icon: ( <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.5 3h5A3.5 3.5 0 0118 6.5v5A3.5 3.5 0 0114.5 15h-5A3.5 3.5 0 016 11.5v-5A3.5 3.5 0 019.5 3zM9 19h6m-3-4v4" /></svg> ) },
+        { id: 'dashboard', label: 'Dashboard', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>) },
+        { id: 'transactions', label: 'Transactions', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" /></svg>) },
+        { id: 'analyses', label: 'Analyses', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3v18h18M7 16l4-5 3 3 5-7" /></svg>) },
+        { id: 'objectifs', label: 'Objectifs', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15l3.5 2-1-4 3-2.5-4-.5L12 6l-1.5 4-4 .5 3 2.5-1 4L12 15z" /></svg>) },
+        { id: 'recurrentes', label: 'Récurrentes', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7h11l-3-3m8 13H9l3 3M20 7a8 8 0 00-14-4M4 17a8 8 0 0014 4" /></svg>) },
+        { id: 'assistant', label: 'Assistant', icon: (<svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.5 3h5A3.5 3.5 0 0118 6.5v5A3.5 3.5 0 0114.5 15h-5A3.5 3.5 0 016 11.5v-5A3.5 3.5 0 019.5 3zM9 19h6m-3-4v4" /></svg>) },
     ];
 
     const renderContent = () => {
@@ -189,7 +229,7 @@ function DashboardPage() {
 
     return (
         <div className="w-screen max-w-full min-h-screen overflow-x-hidden bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 flex flex-col md:flex-row font-sans pb-20 md:pb-0">
-            
+
             {/* MOBILE TOP BAR */}
             <header className="md:hidden sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800/80 px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -257,11 +297,10 @@ function DashboardPage() {
                                 key={item.id}
                                 type="button"
                                 onClick={() => setActiveSection(item.id)}
-                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-medium transition-colors ${
-                                    activeSection === item.id
-                                        ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 font-semibold'
-                                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                                }`}
+                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-xs font-medium transition-colors ${activeSection === item.id
+                                    ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 font-semibold'
+                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                                    }`}
                             >
                                 {item.icon}
                                 <span className="truncate">{item.label}</span>
@@ -292,7 +331,18 @@ function DashboardPage() {
                     </button>
 
                     {showUserMenu && (
-                        <div className="absolute bottom-16 left-0 right-0 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden z-50">
+                        <div className="absolute bottom-16 left-0 right-0 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden z-50 divide-y divide-gray-100 dark:divide-gray-700">
+                            <button
+                                type="button"
+                                onClick={handleResetCurrentMonth}
+                                disabled={resetting}
+                                className="w-full px-4 py-3 text-left text-xs text-amber-600 dark:text-amber-400 font-medium hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-colors flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                <span>{resetting
+                                    ? 'Réinitialisation...'
+                                    : 'Réinitialiser le mois'}</span>
+                            </button>
                             <button
                                 type="button"
                                 onClick={handleLogout}
@@ -317,9 +367,8 @@ function DashboardPage() {
                     <button
                         type="button"
                         onClick={() => setActiveSection('dashboard')}
-                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${
-                            activeSection === 'dashboard' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
-                        }`}
+                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${activeSection === 'dashboard' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
+                            }`}
                     >
                         {navigationItems[0].icon}
                         <span className="mt-0.5">Accueil</span>
@@ -328,9 +377,8 @@ function DashboardPage() {
                     <button
                         type="button"
                         onClick={() => setActiveSection('transactions')}
-                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${
-                            activeSection === 'transactions' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
-                        }`}
+                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${activeSection === 'transactions' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
+                            }`}
                     >
                         {navigationItems[1].icon}
                         <span className="mt-0.5">Histoire</span>
@@ -352,9 +400,8 @@ function DashboardPage() {
                     <button
                         type="button"
                         onClick={() => setActiveSection('assistant')}
-                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${
-                            activeSection === 'assistant' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
-                        }`}
+                        className={`flex flex-col items-center py-1 px-3 rounded-xl text-[10px] font-medium transition-all ${activeSection === 'assistant' ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-gray-400'
+                            }`}
                     >
                         {navigationItems[5].icon}
                         <span className="mt-0.5">Assistant</span>
@@ -410,22 +457,22 @@ function DashboardPage() {
                 </div>
             )}
 
-            {/* MOBILE DRAWER (FULL MENU) */}
+            {/* MOBILE DRAWER (FULL MENU & USER PROFILE) */}
             {isMobileDrawerOpen && (
                 <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end" onClick={() => setIsMobileDrawerOpen(false)}>
-                    <div 
+                    <div
                         className="bg-white dark:bg-gray-900 rounded-t-3xl max-h-[85vh] overflow-y-auto p-5 space-y-5 border-t border-gray-100 dark:border-gray-800 animate-in slide-in-from-bottom duration-300"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="w-12 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto" />
-                        
-                        {/* USER PROFILE CARD */}
-                        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 p-3 rounded-2xl border border-gray-100 dark:border-gray-800">
+
+                        {/* USER PROFILE CARD MOBILE */}
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-purple-600 text-white font-bold text-sm flex items-center justify-center">
+                                <div className="w-10 h-10 rounded-full bg-purple-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
                                     {userInitials}
                                 </div>
-                                <div className="min-w-0">
+                                <div className="min-w-0 flex-1">
                                     <div className="text-xs font-bold text-gray-900 dark:text-white truncate">
                                         {user ? `${user.firstName} ${user.lastName}` : 'Utilisateur'}
                                     </div>
@@ -434,13 +481,30 @@ function DashboardPage() {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                                className="p-2 text-rose-500 bg-rose-50 dark:bg-rose-950/30 rounded-xl text-xs font-medium"
-                            >
-                                Déconnexion
-                            </button>
+
+                            {/* MOBILE ACTION BUTTONS WITH CLEAR LABELS */}
+                            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-gray-200/50 dark:border-gray-700/50">
+                                <button
+                                    type="button"
+                                    onClick={handleResetCurrentMonth}
+                                    disabled={resetting}
+                                    className="px-3 py-2 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-amber-200/50 dark:border-amber-800/50"
+                                >
+                                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    <span>{resetting
+                                        ? 'Réinitialisation...'
+                                        : 'Réinitialiser le mois'}</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="px-3 py-2 text-rose-500 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-rose-200/50 dark:border-rose-800/50"
+                                >
+                                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                    <span>Déconnexion</span>
+                                </button>
+                            </div>
                         </div>
 
                         {/* FULL NAVIGATION LIST */}
@@ -453,11 +517,10 @@ function DashboardPage() {
                                     key={item.id}
                                     type="button"
                                     onClick={() => { setActiveSection(item.id); setIsMobileDrawerOpen(false); }}
-                                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left text-xs font-medium transition-colors ${
-                                        activeSection === item.id
-                                            ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 font-semibold'
-                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                                    }`}
+                                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left text-xs font-medium transition-colors ${activeSection === item.id
+                                        ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 font-semibold'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                        }`}
                                 >
                                     {item.icon}
                                     <span>{item.label}</span>
@@ -540,9 +603,8 @@ function DashboardPage() {
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className={`flex-1 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity ${
-                                        transactionType === 'income' ? 'bg-emerald-500' : 'bg-rose-500'
-                                    } disabled:opacity-50`}
+                                    className={`flex-1 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity ${transactionType === 'income' ? 'bg-emerald-500' : 'bg-rose-500'
+                                        } disabled:opacity-50`}
                                 >
                                     {submitting ? 'Enregistrement...' : 'Valider'}
                                 </button>
