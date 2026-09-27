@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
 import api from '../api/axios';
-import Theme from '../components/dark.mode';
 
 const GOAL_ICONS = {
   Épargne: '🛡️',

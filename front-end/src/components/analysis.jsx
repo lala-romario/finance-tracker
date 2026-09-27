@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
 import api from '../api/axios';
-import Theme from '../components/dark.mode';
 
 const CATEGORY_ICONS = {
   Salaire: '💼',
@@ -143,7 +142,6 @@ function Analytics() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Theme />
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}

@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
 import api from '../api/axios';
-import Theme from '../components/dark.mode';
 
 const INCOME_CATEGORIES = [
   { value: 'Salaire', label: 'Salaire', icon: '💼' },
