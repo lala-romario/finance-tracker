@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\RecurringTransaction;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -56,11 +57,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Budget::class, mappedBy: 'owner')]
     private Collection $budgets;
 
+    /**
+     * @var Collection<int, Goal>
+     */
+    #[ORM\OneToMany(targetEntity: Goal::class, mappedBy: 'owner')]
+    private Collection $goals;
+
+    /**
+     * @var Collection<int, RecurringTransaction>
+     */
+    #[ORM\OneToMany(targetEntity: RecurringTransaction::class, mappedBy: 'owner')]
+    private Collection $recurringTransactions;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'owner')]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->transactions = new ArrayCollection();
         $this->budgets = new ArrayCollection();
+        $this->goals = new ArrayCollection();
+        $this->recurringTransactions = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,7 +170,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
-    }   
+    }
 
     public function eraseCredentials(): void
     {
@@ -254,6 +276,94 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($budget->getOwner() === $this) {
                 $budget->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Goal>
+     */
+    public function getGoals(): Collection
+    {
+        return $this->goals;
+    }
+
+    public function addGoal(Goal $goal): static
+    {
+        if (!$this->goals->contains($goal)) {
+            $this->goals->add($goal);
+            $goal->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGoal(Goal $goal): static
+    {
+        if ($this->goals->removeElement($goal)) {
+            if ($goal->getOwner() === $this) {
+                $goal->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RecurringTransaction>
+     */
+    public function getRecurringTransactions(): Collection
+    {
+        return $this->recurringTransactions;
+    }
+
+    public function addRecurringTransaction(RecurringTransaction $recurringTransaction): static
+    {
+        if (!$this->recurringTransactions->contains($recurringTransaction)) {
+            $this->recurringTransactions->add($recurringTransaction);
+            $recurringTransaction->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecurringTransaction(RecurringTransaction $recurringTransaction): static
+    {
+        if ($this->recurringTransactions->removeElement($recurringTransaction)) {
+            if ($recurringTransaction->getOwner() === $this) {
+                $recurringTransaction->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getOwner() === $this) {
+                $notification->setOwner(null);
             }
         }
 
