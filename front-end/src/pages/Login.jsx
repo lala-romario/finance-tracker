@@ -90,7 +90,7 @@ function Login() {
           <div className="flex md:hidden items-center justify-between mb-8">
             <Link to="/" className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-purple-500/20">
-                F
+                A
               </div>
               <span className="font-bold text-base text-gray-900 dark:text-white tracking-wide">
                 Alovako
